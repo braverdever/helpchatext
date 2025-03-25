@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Professional Chat Modifier",
+  "version": "1.0",
+  "description": "Modify your chat messages to be more professional",
+  "permissions": [
+    "activeTab",
+    "tabs",
+    "scripting",
+    "storage",
+    "sidePanel"
+  ],
+  "web_accessible_resources": [{
+    "resources": ["popup.html"],
+    "matches": ["<all_urls>"]
+  }],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "icons": {
+    "16": "./icons/icon.svg"
+  },
+  "action": {
+    "default_icon": {
+      "16": "./icons/icon.svg"
+    }
+  }
+} 
