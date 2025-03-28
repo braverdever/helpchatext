@@ -37,8 +37,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const data = await response.json();
             modifiedText = data.modifiedText;
             
-            // Update UI
-            inputText.value = modifiedText;
+            // Send message to content script to display result in webpage
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {
+                    action: 'displayResult',
+                    text: modifiedText
+                });
+            });
+            
             actionButton.textContent = 'Copy Text';
             actionButton.classList.add('copy');
             actionButton.onclick = copyToClipboard;
@@ -50,6 +56,33 @@ document.addEventListener('DOMContentLoaded', function() {
         } finally {
             actionButton.disabled = false;
         }
+    }
+
+    function displayResult(text) {
+        // Remove any existing result container
+        const existingResult = document.getElementById('result-container');
+        if (existingResult) {
+            existingResult.remove();
+        }
+
+        // Create result container
+        const resultContainer = document.createElement('div');
+        resultContainer.id = 'result-container';
+        resultContainer.style.cssText = `
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        `;
+
+        // Add the modified text
+        resultContainer.textContent = text;
+
+        // Insert after the input field
+        inputText.parentNode.insertBefore(resultContainer, inputText.nextSibling);
     }
 
     function copyToClipboard() {
